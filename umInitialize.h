@@ -9,10 +9,17 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <assert.h>
+#include <seq.h>
+#include <bitpack.h>
+#include <mem.h>
+#include "umIO.h"
 
-typedef uint32_t Um_instruction;
 
-Um_Instruction[] umInitialize(File *fp);
+Um_instruction* umInitialize(FILE *fp, int expectedLength);
+
 
 
 

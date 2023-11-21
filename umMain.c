@@ -9,11 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <sys/stat.h>
 
 
 #include "umInitialize.h"
 #include "umRun.h"
-
 
 
 
@@ -42,8 +42,20 @@ int main(int argc, char *argv[]){
         usage(argv[0]);
     }
 
-    Um_Instruction program[] = umInitialize(fp);
-    umRun(progam);
+    struct stat *output = malloc(sizeof(struct stat));
+    stat(argv[1], output);
 
+
+    /* divide by 4 to get # of um_instructions in file */
+    int expectedLength = output->st_size / 4;
+
+    free(output);
+
+
+    Um_instruction *program = umInitialize(fp, (uint32_t)expectedLength);
+    
+    umRun(program, expectedLength);
+
+    fclose(fp);
     return 0;
 }

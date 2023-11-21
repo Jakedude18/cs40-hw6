@@ -10,35 +10,36 @@
  * 
  */
 
-#include "umRun.h"
+#include "umMemoryAlloc.h"
+#include <stdio.h>
 
-void conditionalMove(int *a, int *b, int* c);
+void conditionalMove(uint32_t *a, uint32_t *b, uint32_t* c);
 
-void segementLoad(int *a, int *b, int* c);
+void segmentLoad(uint32_t *a, uint32_t *b, uint32_t* c, Memory_T memory);
 
-void segementStore(int *a, int *b, int* c);
+void segmentStore(uint32_t *a, uint32_t *b, uint32_t* c, Memory_T memory);
 
-void addition(int *a, int *b, int* c);
+void addition(uint32_t *a, uint32_t *b, uint32_t* c);
 
-void multiplication(int *a, int *b, int* c);
+void multiplication(uint32_t *a, uint32_t *b, uint32_t* c);
 
-void division(int *a, int *b, int* c);
+void division(uint32_t *a, uint32_t *b, uint32_t* c);
 
-void bitwiseNAND(int *a, int *b, int* c);
+void bitwiseNAND(uint32_t *a, uint32_t *b, uint32_t* c);
 
-void halt(int *a, int *b, int* c);
+/* halt needs to be implemented in run */
 
-void mapSegement(int *a, int *b, int* c);
+void mapSegment(uint32_t *b, uint32_t *c, Memory_T memory);
 
-void unmapSegement(int *a, int *b, int* c);
+void unmapSegment(uint32_t* c, Memory_T memory);
 
-void output(int *a, int *b, int* c);
+void output(uint32_t* c);
 
-void input(int *a, int *b, int* c);
+void input(uint32_t* c);
 
-void loadProgram(int *a, int *b, int* c);
+void loadProgram(uint32_t *b, Memory_T memory);
 
-void loadValue(int *a, int val);
+void loadValue(uint32_t *a, uint32_t value);
 
 
 
