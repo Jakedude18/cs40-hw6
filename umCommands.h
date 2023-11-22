@@ -37,7 +37,8 @@ void output(uint32_t* c);
 
 void input(uint32_t* c);
 
-void loadProgram(uint32_t *b, Memory_T memory);
+void loadProgram(uint32_t *b, uint32_t *c,
+        Memory_T memory, uint32_t **programCounter);
 
 void loadValue(uint32_t *a, uint32_t value);
 

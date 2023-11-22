@@ -37,6 +37,7 @@ void multiplication(uint32_t *a, uint32_t *b, uint32_t *c){
 }
 
 void division(uint32_t *a, uint32_t *b, uint32_t *c){
+        assert(*c != 0);
         *a = *b / *c;
 }
 
@@ -65,11 +66,11 @@ void input(uint32_t *c){
                 *c = ~all0;
         }
 }
-void loadProgram(uint32_t *b, Memory_T memory){
-        if(*b == 0){
-                return;
-        }
-        segmentDuplicate(*b, memory);
+void loadProgram(uint32_t *b, uint32_t *c,
+        Memory_T memory, uint32_t **programCounter){
+            
+        uint32_t * dupSegAddress = segmentDuplicate(*b, memory);
+        *programCounter = dupSegAddress + *c;
 }
 
 void loadValue(uint32_t *a, uint32_t value){

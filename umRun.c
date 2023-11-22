@@ -29,7 +29,7 @@ typedef enum Um_opcode {
 static void depackWord(uint32_t word, uint32_t **registers, uint32_t **ra, 
         uint32_t **rb, uint32_t **rc, Um_opcode *op);
 static void executeCommand(uint32_t *ra, uint32_t *rb, uint32_t *rc,
-        Um_opcode op, Memory_T memory, uint32_t *programCounter);
+        Um_opcode op, Memory_T memory, uint32_t **programCounter);
 
 static void executeLoadValue(uint32_t instruction, uint32_t **registers);
 
@@ -39,7 +39,7 @@ static void deallocateRegisters(uint32_t** registers);
 
 /* frees program*/
 void umRun(uint32_t *program, uint32_t length){
-        uint32_t programCounter = 0;
+        uint32_t *programCounter = program;
 
         uint32_t** registers = ALLOC(sizeof(uint32_t *) * registersLen);
         for(int i = 0; i < registersLen; i++){
@@ -48,18 +48,17 @@ void umRun(uint32_t *program, uint32_t length){
 
         /* initialize memoery */
         Memory_T memory = initalizeMemory(program, length);
-        
 
-        while(programCounter < length){
+        while(programCounter != NULL){
                 uint32_t *ra, *rb, *rc;
                 // *rc = ALLOC(sizeof(uint32_t));
                 Um_opcode op;
-                depackWord(program[programCounter], registers, &ra, &rb, &rc, &op);
-                
+                depackWord(*programCounter, registers, &ra, &rb, &rc, &op);
+                fprintf(stderr, "%d\n", op);
                 // fprintf(stderr, "programCounter is %u\n", programCounter);
 
                 if(op == LV){
-                        executeLoadValue(program[programCounter], registers);
+                        executeLoadValue(*programCounter, registers);
                 }
                 else if(op == HALT){
                         break;    
@@ -101,12 +100,14 @@ static void depackWord(uint32_t word, uint32_t **registers, uint32_t **ra,
         *rb = registers[Bitpack_getu(word, registerLen, registerLen)];
         *ra = registers[Bitpack_getu(word, registerLen, registerLen * 2)];
 
-        *op = Bitpack_getu(word, opcodeLen, wordLen - opcodeLen);
+        uint32_t opcode =  Bitpack_getu(word, opcodeLen, wordLen - opcodeLen);
+        assert(opcode <= 13);
+        *op = opcode;
 
 }
 
 static void executeCommand(uint32_t *ra, uint32_t *rb, uint32_t *rc,
-        Um_opcode op, Memory_T memory, uint32_t *programCounter)
+        Um_opcode op, Memory_T memory, uint32_t **programCounter)
 {        
         switch(op){
                 case CMOV: conditionalMove(ra, rb, rc);
@@ -132,8 +133,7 @@ static void executeCommand(uint32_t *ra, uint32_t *rb, uint32_t *rc,
                         break;
                 case OUT: output(rc);
                         break;
-                case LOADP: loadProgram(rb, memory);
-                        *programCounter = *rc;
+                case LOADP: loadProgram(rb, rc, memory, programCounter);
                         break;
                 case LV: break;
         }

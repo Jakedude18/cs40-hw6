@@ -35,6 +35,7 @@ Segment_T initializeSegment(uint32_t *arr, int length){
 }
 
 void deallocateSegment(Segment_T segment){
+    // fprintf(stderr,"new segment arr is %p\n", (void *)segment->arr);
     //fprintf(stderr, "array at 0 %u\n", segment->arr[0]);
     FREE(segment->arr);
     FREE(segment);
@@ -83,7 +84,7 @@ uint32_t loadMemory(uint32_t length, Memory_T memory){
                 // fprintf(stderr, "using old index\n");
                 Segment_T oldVal = (Segment_T) Seq_put(segments, index, newSeg);
                 if(oldVal != NULL){
-                        // fprintf(stderr, "freeing old val");
+                        //fprintf(stderr, "freeing old val");
                         deallocateSegment(oldVal);
                 }
         }
@@ -112,22 +113,26 @@ void unloadMemory(uint32_t index, Memory_T memory){
 uint32_t getMemory(uint32_t index, uint32_t offset, Memory_T memory){
         Seq_T segments = memory->segments;
         Segment_T segment = (Segment_T) (Seq_get(segments, index));
-        // assert(segment->arr == NULL);
+        assert(segment->arr != NULL);
         return segment->arr[offset];
 }
 
 void setMemory(uint32_t index, uint32_t offset, uint32_t value, Memory_T memory){
         Seq_T segments = memory->segments;
-        //fprintf(stderr, "index is: %u memory length is: %u, offset is: %u\n", index, Seq_length(memory->segments), offset);
         Segment_T segment = (Segment_T) (Seq_get(segments, index));
-        // assert(segment->arr == NULL);
+        assert(segment->arr != NULL);
+        // fprintf(stderr, "index is: %u arr length is: %d, offset is: %u\n", index, segment->length, offset);
         segment->arr[offset] = value;
 }
 
-void segmentDuplicate(int index, Memory_T memory){
+uint32_t * segmentDuplicate(int index, Memory_T memory){
         // fprintf(stderr, "segmentDuplicateRan\n");
         Seq_T segments = memory->segments;
+        
         Segment_T originalSegment = (Segment_T) (Seq_get(segments, index));
+        if(index == 0){
+            return originalSegment->arr;
+        }
         uint32_t *newArr = CALLOC(originalSegment->length, sizeof(uint32_t)); 
         // fprintf(stderr, "made if half way\n");
         // fprintf(stderr, "length is %d\n", originalSegment->length);
@@ -136,10 +141,14 @@ void segmentDuplicate(int index, Memory_T memory){
             newArr[i] = originalSegment->arr[i];
         }
         Segment_T newSegment = initializeSegment(newArr, originalSegment->length);
+        assert(newSegment->arr != NULL);
         // Segment_T oldSegment = (Segment_T) Seq_get(segments, 0);
-        Seq_put(segments, 0, newSegment);
-        deallocateSegment(Seq_put(segments, 0, newSegment));
+        // Seq_put(segments, 0, newSegment);
+        // fprintf(stderr,"new segment is %p\n", (void *)newSegment->arr);
+        deallocateSegment((Segment_T)Seq_put(segments, 0, newSegment));
+
+        return newSegment->arr;
         // Segment_T oldSegment = (Segment_T) Seq_put(segments, 0, newSegment);
         // fprintf(stderr, "old segment pointer is %u\n", oldSegment->arr[0]);
-        fprintf(stderr, "made it to the end of segmentDuplicate\n");
+        // fprintf(stderr, "made it to the end of segmentDuplicate\n");
 }
