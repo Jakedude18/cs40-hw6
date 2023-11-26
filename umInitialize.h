@@ -4,8 +4,8 @@
  * November 13, 2023
  * 
  * This is the header file to umInitialize.c. It declares the initialize
- * function that calls umIO.c and the function to copy the sequence created in
- * umIO to an array.
+ * function which takes in a file poitner and expected length and 
+ * extracts and returns an array of Um_instructions
  */
 
 #include <stdio.h>
@@ -15,8 +15,8 @@
 #include <seq.h>
 #include <bitpack.h>
 #include <mem.h>
-#include "umIO.h"
 
+typedef uint32_t Um_instruction;
 
 Um_instruction* umInitialize(FILE *fp, int expectedLength);
 

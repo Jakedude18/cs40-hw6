@@ -1,0 +1,133 @@
+Authors:
+        Jake Kerrigan and Jacob Frieman
+
+Help received:
+        TA's during office hours
+
+Correct Implementation:
+        To the best of our knowledge everything is correctly implemented
+
+Departures from our design:
+        We decided to simplify our implementation by getting rid of the umIO 
+        and umProgramLoader module which we realized were extranous.
+
+        We also completly overhauled our memoryAlloc module multiple times
+        throughout development. 
+        
+        Lots of changes were made to the implementation of memoryAlloc 
+        thoughout development. For instance we orignally we thought of using
+        UArrays but we realized that c arrays would be more lightweight. And we
+        didn't even consider using old memory identifiers or that we would have
+        to be able to duplicate segments.
+
+Architecture:
+        
+        Our programs starts executation with umMain.c which simply handles 
+        input and usage and then calls umInitalize() and umRun().
+         
+        --Modules--
+
+        UmInitialize:
+        Implements one public function which takes in the input file and an 
+        expected length of that file (found using stat) and returns a
+        dynamically allocated array of machine instructions.
+
+        Called by umMain.c
+
+        UmRun:
+        
+        Implents one public function which takes in a array of machine
+        instructions.
+
+        UmRun will depack and then exececute each command by utilizing the
+        umCommands module.
+
+        In order to meet the functionality of the umCommands, umRun has a 
+        programCounter (uint32_t *) which points to the next command to run,
+        a array of registers which are fed by reference into umCommands. and
+        finally a Memory_T struct which is passed into certain commands.
+        
+        In the case of the loadProgram command unRun passes the programCounter 
+        into an unCommands by reference and unCommands sets it to it's new 
+        appropiate value.
+
+        UmRun starts by initalizing its registers and Memory_T -
+        (through the use of a class function from umMemoryAlloc) -
+        Then is runs a while loop until which executes each instruction until
+        a halt command is found or an empty machine instruction attempts to be
+        executed.
+
+        It finishes by deallocating its registers and Memory_T -
+        (again though a class function found in umMemoryAlloc)
+
+        UmCommands:
+
+        UmCommands is a suit of commands which are all 1-1 mappings of the
+        commands for the universial machine. Each command takes its inputs 
+        though pass by reference registers.
+
+        Additionaly commands that require use of the commands memory take 
+        a Memory_T struct which in conjuction with MemoryAlloc allows them to
+        modify and access memory accordingly.
+
+        MemoryAlloc:
+
+        MemoryAlloc defines the Memory_T class which represents
+        segmented memory as defined by the umSpec.
+
+        The underlying data structore for memoryAlloc is Memory_T which is an
+        incomplete struct which contains two Hanson sequences:
+        1. Sequence of Segement_T structs
+        2. Sequence of uint32s containing the ids of unmaped memory:
+
+        Segment_T structs are just arrays of uint32_t which also contains a
+        length variable to allow for depp copy duplication funcionality
+
+        MemoryAlloc is used by umCommands and the actual Memoy_T that 
+        is used by umCommands is stored in umRun
+
+
+How long UM took to execute 50 million instructions:
+
+
+        Using the time command we found that our implementation of UM takes
+        4.302 seconds to run midmark. We also added a counter to umRun which
+        counts how many instructions are executed and prints out the result at
+        the end. We found that midmark ran 85,070,522 instructions. So to
+        adjust out time for 50,000,000 commands we multiplied:
+        4.302 by (50,000,000 / 85,070,522) = 2.53
+
+        So our UM takes 2.53 seconds to run 50 million instructions
+
+
+UM unit test (from UMTESTS):
+
+        all_commands_test:
+
+        This is a comprehensive test meant to test memoryAlloc
+        It does this by activating a new memory segement, loading in a
+        value, setting that value to a new register, deactivating the
+        memory segment, and finally printing out the retrived value to test
+        to make sure it's correct:
+        
+        reuse_unloaded_memory:
+
+        This test tests memoryAlloc's functionality to reuse the unmapped
+        memory segements. It does this by activating a segment, deactivating
+        that same segment, then activating another segment and checking to 
+        make sure the the segment id of the new segment is set to 1
+
+        --Instruction Test Set--
+
+        Each test tests it's respective name's instruction
+        Each test builds on one another, testing compound functionality        
+
+Time spend on analysis:
+        5 hours
+
+Time spent on design:
+        5 hours
+
+
+time spent solving the problems after your analysis:
+        40 hours

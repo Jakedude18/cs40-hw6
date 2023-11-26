@@ -1,0 +1,16 @@
+all_commands.um
+reuse_unloaded_memory.um
+halt.um
+output.um
+load_value.um
+cmov.um
+add.um
+mul.um
+div.um
+nand.um
+activate.um
+deactivate.um
+sstore.um
+sload.um
+input.um
+loadp.um

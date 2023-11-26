@@ -28,6 +28,7 @@ void unloadMemory(uint32_t index, Memory_T memory);
 
 uint32_t getMemory(uint32_t index, uint32_t offset, Memory_T memory);
 
-void setMemory(uint32_t index, uint32_t offset, uint32_t value, Memory_T memory);
+void setMemory(uint32_t index, uint32_t offset,
+        uint32_t value, Memory_T memory);
 
 uint32_t * segmentDuplicate(int index, Memory_T memory);

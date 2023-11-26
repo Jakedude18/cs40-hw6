@@ -9,5 +9,7 @@
 
 #include "umCommands.h"
 #include <bitpack.h>
+#include <stdlib.h>
+
 
 void umRun(uint32_t *program, uint32_t length);

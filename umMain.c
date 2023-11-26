@@ -26,8 +26,18 @@ usage(const char *progname)
         exit(1);
 }
 
-
-int main(int argc, char *argv[]){
+/**********main********
+ * Handles the main functionality of the program. Handles the inputted
+ * file, and send it through umInitialize and umRun.
+ * 
+ * Inputs: 
+ *      int argc: the number of arguements given to the program
+ *      char *argv[]: contains the file name
+ * Return: EXIT_SUCCESS    
+ * Notes: fp deallocated in umInitialize.    
+ ************************/
+int main(int argc, char *argv[])
+{
     FILE *fp = NULL;
 
 
@@ -51,7 +61,7 @@ int main(int argc, char *argv[]){
 
     free(output);
 
-
+    
     Um_instruction *program = umInitialize(fp, (uint32_t)expectedLength);
     
     umRun(program, expectedLength);
